@@ -1,0 +1,261 @@
+---
+alwaysApply: true
+---
+# Cardoil Avantaj — Design System
+
+You are responsible for maintaining visual consistency across this Next.js marketing site for **Cardoil Avantaj** (Romanian B2B transport & fuel broker).
+
+The site uses the **Translo Home-2** theme as its primary UI layer, with **Tailwind v4 + shadcn/ui** for forms and a few legacy inner-page blocks. Follow the rules below — do not mix patterns arbitrarily.
+
+---
+
+## Source of truth (read before styling)
+
+| File | Role |
+|------|------|
+| `src/styles/translo/index.css` | Translo theme entry — Bootstrap, module CSS, icomoon, brand overrides |
+| `src/styles/translo/color-1.css` | Brand primary override (`--thm-primary: #00a44f`) scoped to `.homeTwo` |
+| `src/styles/translo/react-adjustment.css` | React/Swiper fixes — add overrides here, not in vendor CSS |
+| `src/app/globals.css` | Tailwind tokens, shadcn theme, brand utilities for forms |
+| `src/app/layout.tsx` | Site shell: `body-dark-bg homeTwo` + `TransloHeader` / `TransloFooter` |
+| `src/lib/content.ts` | Copy, nav, images, services, stats — not styling |
+| `src/lib/pexels.ts` | Pexels fallback URLs when CDN/local images fail |
+| `components.json` | shadcn/ui config (`base-nova`, Base UI) |
+
+**Import order in layout:** `globals.css` then `@/styles/translo/index.css`.
+
+When changing brand green, update **`color-1.css`** (`--thm-primary`) and **`globals.css`** (`--brand`, `--ring`) together.
+
+---
+
+## Architecture overview
+
+```
+Primary (Translo Home-2)          Secondary (Tailwind / shadcn)
+─────────────────────────         ─────────────────────────────
+TransloHeader / Footer            ContactForm (forms/)
+TransloPageHeader                 AboutAccordion (/despre)
+home-2 sections (hero, about…)    Partners, Testimonials (/despre)
+Bootstrap grid + .thm-btn         SiteImage on inner pages
+icomoon icons                     Card, Input, Accordion (ui/)
+Swiper sliders                    buttonVariants for form CTAs
+```
+
+**Rules:**
+- New pages and sections → **Translo patterns** (`sec-title-two`, `.padding`, `.thm-btn`, Bootstrap `.container` / `.row`)
+- Do **not** use `src/components/layout/header.tsx`, `sections/hero.tsx`, or other pre-Translo layout/section components for new work
+- Forms → `ContactForm` inside `.company-benefit-one__form` or equivalent Translo panel
+- Copy and image URLs → `content.ts`; Pexels keys → `pexels.ts`
+
+---
+
+## Brand colors
+
+### Translo theme (pages, heroes, CTAs, icons)
+
+| Token | Value | Use for |
+|-------|-------|---------|
+| `--thm-primary` | `#00a44f` | CTAs (`.thm-btn`), accents, links, counter highlights |
+| `--thm-black` | `#121213` | Headings, dark text |
+| `--thm-white` | `#ffffff` | Text on dark backgrounds |
+| `--thm-gray-bg` | `#f8f8f8` | Light section backgrounds |
+
+Scoped under `:root .homeTwo` in `color-1.css`. Use Translo classes — do not hardcode `#00a44f` in components.
+
+### Tailwind / shadcn (forms, legacy blocks)
+
+| Token | Tailwind | Use for |
+|-------|----------|---------|
+| `--brand` | `bg-brand`, `text-brand` | Form buttons, focus rings |
+| `--brand-accent` | `#faf031` | Highlights in Tailwind sections |
+| `--navy` | `bg-navy`, `text-navy` | Legacy navy sections on `/despre` |
+| `--primary`, `--muted`, `--card`, `--border` | shadcn UI chrome | Inputs, cards, accordions |
+
+**Rules:**
+- Translo sections: rely on `--thm-*` via theme CSS
+- Form fields: shadcn `Input` / `Textarea` with `ContactForm variant="dark"` on dark panels
+- Never use raw hex in JSX — use CSS variables
+
+---
+
+## Typography
+
+Translo loads **Rubik** (headings) and **Krub** (body) via `index.css`.
+
+| Pattern | Use for |
+|---------|---------|
+| `.sec-title-two` + `.sub-title h5` | Section eyebrows |
+| `.sec-title-two h2` | Section headings |
+| `.thm-btn` + `.txt` | Primary CTAs |
+| icomoon `<span className="icon-*" />` or `<i className="icon-*">` | Decorative / UI icons |
+
+**Rules:**
+- Prefer Translo title blocks over ad-hoc heading classes on themed pages
+- Site language is Romanian (`lang="ro"`) — preserve diacritics
+- Lucide icons only inside shadcn components, not Translo sections
+
+---
+
+## Layout & spacing
+
+| Pattern | Use for |
+|---------|---------|
+| `.padding` | Default vertical section rhythm (Translo) |
+| `.container` + `.row` + `.col-*` | Bootstrap grid — match existing pages |
+| `TransloPageHeader` | Inner page hero (breadcrumb + title) |
+| `.section` / `.container-page` | **Legacy Tailwind only** — `/despre` mixed blocks |
+
+**Rules:**
+- Inner pages: `TransloPageHeader` then `<section className="… padding">` with `.container`
+- Do not nest `.container` inside `.container`
+- Reuse existing Translo section class names (`about-two`, `services-two`, `contact-one`) when extending pages
+
+---
+
+## Translo components
+
+| Component | Path | When to use |
+|-----------|------|-------------|
+| `TransloHeader` | `components/translo/header.tsx` | Site header (layout) |
+| `TransloFooter` | `components/translo/footer.tsx` | Site footer (layout) |
+| `TransloPageHeader` | `components/translo/page-header.tsx` | Inner page title band |
+| `TransloHero` … `TransloCta` | `components/translo/home-2/*` | Homepage sections |
+| `FallbackImage` | `components/shared/fallback-image.tsx` | `<img>` with Pexels fallback |
+| `FallbackBackground` | `components/shared/fallback-background.tsx` | CSS background with fallback |
+| `SiteImage` | `components/shared/site-image.tsx` | Next.js `Image` on inner pages |
+
+Homepage section order (do not reorder without reason):
+
+`Hero → About → Fact → Services → CompanyBenefit → Testimonials → FAQ → CTA`
+
+---
+
+## Swiper sliders
+
+Used in hero, services carousel, testimonials, partner logos.
+
+**Required config for custom nav buttons:**
+
+```tsx
+navigation={{
+  nextEl: "#…-swiper-button-next",
+  prevEl: "#…-swiper-button-prev",
+  addIcons: false, // prevents Swiper 11 SVG from overlapping icomoon icons
+}}
+```
+
+Nav buttons use `.swiper-nav-style1` + icomoon `icon-left-arrow-5` / `icon-right-arrow-5`. Style overrides live in `react-adjustment.css`.
+
+Import in slider components: `swiper/css`, and `swiper/css/navigation` when Navigation module is used.
+
+---
+
+## shadcn/ui (forms & legacy sections)
+
+| Component | Path | Notes |
+|-----------|------|-------|
+| `ContactForm` | `components/forms/contact-form.tsx` | `variant="dark"` on Translo dark panels |
+| `Input`, `Textarea` | `components/ui/*` | All form fields |
+| `Accordion` | `components/ui/accordion.tsx` | `/despre` about content |
+| `Card` | `components/ui/card.tsx` | Legacy Tailwind panels only |
+
+**Base UI note:** `Button` does not support `asChild`. Style links with `className={cn(buttonVariants({ variant: "brand" }))}`.
+
+Add components via: `npx shadcn@latest add <component> -y`
+
+---
+
+## Images
+
+- **Primary CDN:** `cardoilavantaj.ro` via `content.ts`
+- **Local theme assets:** `/img/…` (shapes, backgrounds from Translo)
+- **Fallbacks:** `FallbackImage`, `FallbackBackground`, `SiteImage` with `fallbackKey` from `pexels.ts`
+- Remote patterns in `next.config.ts`: `cardoilavantaj.ro`, `images.pexels.com`
+- Meaningful `alt` text in Romanian; `sizes` on Next.js `Image`
+
+Decorative icomoon icons: `aria-hidden="true"`.
+
+---
+
+## Accessibility
+
+- One `<h1>` per page (usually inside hero or `TransloPageHeader` as `h2` — match Translo convention)
+- Forms: `<label htmlFor="…">` on every field
+- Testimonials: `<blockquote>` + `<cite>` where applicable
+- Visible focus on shadcn controls — do not remove `focus-visible:ring-*`
+- Color contrast: green `#00a44f` on white and white on dark backgrounds
+
+---
+
+## Responsive design
+
+Translo handles breakpoints via `responsive.css` and Bootstrap grid (`col-xl-6`, `d-lg-none`, etc.).
+
+**Rules:**
+- Follow existing Translo responsive patterns in module CSS before adding custom media queries
+- Verify mobile menu, hero text, and swiper nav at narrow widths
+- Swiper breakpoints already defined in slider components — mirror when adding new carousels
+
+---
+
+## Design evolution workflow
+
+1. **Check** if a Translo module class or existing component covers the pattern
+2. **Extend content** in `content.ts` for copy/images
+3. **Add Translo section** under `components/translo/` if reusable
+4. **Override CSS** in `react-adjustment.css` or `color-1.css` — never edit `bootstrap.min.css` or `style-main.css` directly unless extracting a patch
+5. **Use Tailwind/shadcn** only for forms or isolated legacy blocks
+
+---
+
+## Review checklist
+
+- [ ] Translo classes and `.thm-btn` for themed pages — not legacy `sections/*`
+- [ ] Brand green via `--thm-primary` / `--brand`, no hardcoded hex
+- [ ] Copy in `content.ts`, images with Pexels fallback where appropriate
+- [ ] Swiper nav uses `addIcons: false` + icomoon icons
+- [ ] `ContactForm` with correct `variant` on form pages
+- [ ] Romanian copy with correct diacritics
+- [ ] Responsive at mobile and desktop
+- [ ] Accessibility: labels, focus, semantic headings
+
+---
+
+## Anti-patterns
+
+```tsx
+// ❌ Legacy header/footer on new pages
+import { Header } from "@/components/layout/header";
+
+// ❌ Tailwind page hero on Translo pages
+<PageHero label="…" title="…" />
+
+// ❌ Swiper without addIcons: false (double arrow icons)
+navigation={{ nextEl: "#…", prevEl: "#…" }}
+
+// ❌ Hardcoded brand color in Translo section
+style={{ color: "#00a44f" }}
+
+// ❌ Radix asChild on Base UI Button
+<Button asChild><Link href="…">…</Link></Button>
+```
+
+```tsx
+// ✅ Translo inner page
+<TransloPageHeader title="Servicii" />
+<section className="services-two padding">
+  <div className="container">…</div>
+</section>
+
+// ✅ Translo CTA
+<Link className="thm-btn" href="/oferta">
+  <span className="txt">Solicită ofertă</span>
+  <i className="icon-right-arrow" />
+</Link>
+
+// ✅ Image with fallback
+<SiteImage src={aboutImages.team} alt="…" fallbackKey="team" />
+
+// ✅ Form on dark panel
+<ContactForm variant="dark" />
+```
