@@ -1,0 +1,90 @@
+@use "../abstracts/variables" as *;
+
+// shadcn/base-ui accordion inside Translo FAQ
+
+.accordion-item {
+  background-color: transparent;
+  border: 0 !important;
+}
+
+.accordion-header h2 {
+  color: white;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+.accordion-two .accordion-item {
+  border-bottom: 1px solid rgba(var(--thm-white-rgb), 0.1) !important;
+}
+
+.accordion-two .accordion-trigger {
+  width: 100%;
+  padding: 18px 20px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.accordion-two .accordion-trigger[aria-expanded="true"],
+.accordion-two .accordion-trigger[data-panel-open] {
+  background-color: $hero-panel-bg;
+  padding: 13px 20px 12px;
+  border-radius: 6px;
+}
+
+.accordion-two .accordion-trigger h2 {
+  margin: 0;
+  color: white;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+.accordion-two .accordion-trigger h2 span {
+  color: $accordion-accent;
+  font-weight: 800;
+}
+
+.accordion-two .accordion-trigger [data-slot="accordion-trigger-icon"] {
+  display: none;
+}
+
+.accordion-two .accordion-trigger::after {
+  font-family: "icomoon" !important;
+  font-weight: 900;
+  content: "\e932";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 15px;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.accordion-two .accordion-trigger[aria-expanded="true"]::after,
+.accordion-two .accordion-trigger[data-panel-open]::after {
+  color: $accordion-accent;
+  transform: rotate(180deg);
+}
+
+.accordion-two .accordion-content {
+  padding: 0 20px 16px;
+  color: rgba(var(--thm-white-rgb), 0.85);
+}
+
+.accordion-two .accordion-content span {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--thm-primary);
+}
+
+.accordion-two .accordion-content p {
+  color: #eaece8;
+  font-weight: 500;
+}

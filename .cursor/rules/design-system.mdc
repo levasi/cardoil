@@ -13,18 +13,22 @@ The site uses the **Translo Home-2** theme as its primary UI layer, with **Tailw
 
 | File | Role |
 |------|------|
-| `src/styles/translo/index.css` | Translo theme entry — Bootstrap, module CSS, icomoon, brand overrides |
-| `src/styles/translo/color-1.css` | Brand primary override (`--thm-primary: #00a44f`) scoped to `.homeTwo` |
-| `src/styles/translo/react-adjustment.css` | React/Swiper fixes — add overrides here, not in vendor CSS |
+| `src/styles/translo/main.scss` | Translo theme SCSS entry — modules, vendor CSS, Cardoil overrides |
+| `src/styles/translo/abstracts/_variables.scss` | Brand tokens (`$thm-primary`, layout sizes) |
+| `src/styles/translo/base/_brand.scss` | CSS custom properties scoped to `.homeTwo` |
+| `src/styles/translo/components/` | Cardoil-specific overrides (hero, accordion, swiper) |
 | `src/app/globals.css` | Tailwind tokens, shadcn theme, brand utilities for forms |
-| `src/app/layout.tsx` | Site shell: `body-dark-bg homeTwo` + `TransloHeader` / `TransloFooter` |
+| `src/app/layout.tsx` | Root layout: `<html>`, global CSS imports, metadata |
+| `src/app/(site)/layout.tsx` | Site shell: header, footer, smooth scroll, animations |
 | `src/lib/content.ts` | Copy, nav, images, services, stats — not styling |
 | `src/lib/pexels.ts` | Pexels fallback URLs when CDN/local images fail |
 | `components.json` | shadcn/ui config (`base-nova`, Base UI) |
 
-**Import order in layout:** `globals.css` then `@/styles/translo/index.css`.
+**Import order in root layout:** `globals.css` then Translo vendor CSS + `main.scss`.
 
-When changing brand green, update **`color-1.css`** (`--thm-primary`) and **`globals.css`** (`--brand`, `--ring`) together.
+**App Router:** All public pages live under `src/app/(site)/` (route group — URLs unchanged).
+
+When changing brand green, update **`abstracts/_variables.scss`**, **`base/_brand.scss`**, and **`globals.css`** (`--brand`, `--ring`) together.
 
 ---
 
@@ -33,17 +37,17 @@ When changing brand green, update **`color-1.css`** (`--thm-primary`) and **`glo
 ```
 Primary (Translo Home-2)          Secondary (Tailwind / shadcn)
 ─────────────────────────         ─────────────────────────────
-TransloHeader / Footer            ContactForm (forms/)
-TransloPageHeader                 AboutAccordion (/despre)
-home-2 sections (hero, about…)    Partners, Testimonials (/despre)
-Bootstrap grid + .thm-btn         SiteImage on inner pages
-icomoon icons                     Card, Input, Accordion (ui/)
-Swiper sliders                    buttonVariants for form CTAs
+SiteHeader / SiteFooter           ContactForm (forms/)
+SitePageHeader                    AboutAccordion, Partners (/despre)
+home/* sections (hero, about…)    SiteImage on inner pages
+Tailwind grid + .thm-btn          Card, Input, Accordion (ui/)
+icomoon icons                     buttonVariants for form CTAs
+Swiper sliders                    providers/ (Lenis, scroll animations)
 ```
 
 **Rules:**
-- New pages and sections → **Translo patterns** (`sec-title-two`, `.padding`, `.thm-btn`, Bootstrap `.container` / `.row`)
-- Do **not** use `src/components/layout/header.tsx`, `sections/hero.tsx`, or other pre-Translo layout/section components for new work
+- New pages and sections → **Translo patterns** (`sec-title-two`, `.padding`, `.thm-btn`, `.container` + Tailwind grid)
+- Do **not** add new files under removed legacy paths (`components/layout/`, `components/sections/`)
 - Forms → `ContactForm` inside `.company-benefit-one__form` or equivalent Translo panel
 - Copy and image URLs → `content.ts`; Pexels keys → `pexels.ts`
 
@@ -80,7 +84,7 @@ Scoped under `:root .homeTwo` in `color-1.css`. Use Translo classes — do not h
 
 ## Typography
 
-Translo loads **Rubik** (headings) and **Krub** (body) via `index.css`.
+Translo loads **Rubik** (headings) and **Krub** (body) via `base/_fonts.scss`.
 
 | Pattern | Use for |
 |---------|---------|
@@ -101,25 +105,29 @@ Translo loads **Rubik** (headings) and **Krub** (body) via `index.css`.
 | Pattern | Use for |
 |---------|---------|
 | `.padding` | Default vertical section rhythm (Translo) |
-| `.container` + `.row` + `.col-*` | Bootstrap grid — match existing pages |
-| `TransloPageHeader` | Inner page hero (breadcrumb + title) |
+| `.container` + Tailwind `grid` / `flex` | Layout — match existing pages (e.g. `grid grid-cols-1 xl:grid-cols-2`) |
+| `SitePageHeader` | Inner page hero (breadcrumb + title) |
 | `.section` / `.container-page` | **Legacy Tailwind only** — `/despre` mixed blocks |
 
 **Rules:**
-- Inner pages: `TransloPageHeader` then `<section className="… padding">` with `.container`
+- Inner pages: `SitePageHeader` then `<section className="… padding">` with `.container`
 - Do not nest `.container` inside `.container`
 - Reuse existing Translo section class names (`about-two`, `services-two`, `contact-one`) when extending pages
 
 ---
 
-## Translo components
+## Site components
 
 | Component | Path | When to use |
 |-----------|------|-------------|
-| `TransloHeader` | `components/translo/header.tsx` | Site header (layout) |
-| `TransloFooter` | `components/translo/footer.tsx` | Site footer (layout) |
-| `TransloPageHeader` | `components/translo/page-header.tsx` | Inner page title band |
-| `TransloHero` … `TransloCta` | `components/translo/home-2/*` | Homepage sections |
+| `SiteHeader` | `components/site/header.tsx` | Site header (`(site)/layout`) |
+| `SiteFooter` | `components/site/footer.tsx` | Site footer (`(site)/layout`) |
+| `SitePageHeader` | `components/site/page-header.tsx` | Inner page title band |
+| `HomeHero` … `HomeCta` | `components/home/*` | Homepage sections |
+| `AboutAccordion` | `components/about/accordion.tsx` | `/despre` accordion |
+| `SmoothScroll` | `components/providers/smooth-scroll.tsx` | Lenis wrapper |
+| `ScrollAnimations` | `components/providers/scroll-animations.tsx` | Inner-page scroll reveals |
+| `HomeAnimations` | `components/home/animations.tsx` | Homepage GSAP only |
 | `FallbackImage` | `components/shared/fallback-image.tsx` | `<img>` with Pexels fallback |
 | `FallbackBackground` | `components/shared/fallback-background.tsx` | CSS background with fallback |
 | `SiteImage` | `components/shared/site-image.tsx` | Next.js `Image` on inner pages |
@@ -189,7 +197,7 @@ Decorative icomoon icons: `aria-hidden="true"`.
 
 ## Responsive design
 
-Translo handles breakpoints via `responsive.css` and Bootstrap grid (`col-xl-6`, `d-lg-none`, etc.).
+Translo handles breakpoints via `responsive.css` and Tailwind responsive utilities (`xl:grid-cols-2`, `lg:hidden`, etc.).
 
 **Rules:**
 - Follow existing Translo responsive patterns in module CSS before adding custom media queries
@@ -203,7 +211,7 @@ Translo handles breakpoints via `responsive.css` and Bootstrap grid (`col-xl-6`,
 1. **Check** if a Translo module class or existing component covers the pattern
 2. **Extend content** in `content.ts` for copy/images
 3. **Add Translo section** under `components/translo/` if reusable
-4. **Override CSS** in `react-adjustment.css` or `color-1.css` — never edit `bootstrap.min.css` or `style-main.css` directly unless extracting a patch
+4. **Override CSS** in `react-adjustment.css` or `color-1.css` — never edit `style-main.css` directly unless extracting a patch
 5. **Use Tailwind/shadcn** only for forms or isolated legacy blocks
 
 ---

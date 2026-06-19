@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { TransloFooter } from "@/components/translo/footer";
-import { TransloHeader } from "@/components/translo/header";
 import "./globals.css";
-import "@/styles/translo/index.css";
+import "@/styles/translo/all.min.css";
+import "@/styles/translo/main.scss";
+import "@/styles/translo/animate.min.css";
+import "@/styles/translo/custom-animate.css";
+import "@/styles/translo/responsive.css";
+import "@/styles/translo/icomoon.css";
+import "@/styles/translo/style-main.css";
 
 export const metadata: Metadata = {
   title: {
@@ -27,15 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ro">
-      <body>
-        <div className="body-dark-bg homeTwo">
-          <div className="fix">
-            <TransloHeader />
-            {children}
-            <TransloFooter />
-          </div>
-        </div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

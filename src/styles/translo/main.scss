@@ -1,0 +1,8 @@
+// Cardoil Translo theme — SCSS partials only.
+// Vendor .css bundles are imported directly from layout.tsx to avoid
+// Tailwind PostCSS failing to resolve nested @import paths.
+
+@import "./base/fonts";
+@import "./modules/index";
+@import "./base/brand";
+@import "./components/index";
