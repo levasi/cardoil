@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "@/styles/translo/all.min.css";
 import "@/styles/translo/main.scss";
-import "@/styles/translo/animate.min.css";
-import "@/styles/translo/custom-animate.css";
-import "@/styles/translo/responsive.css";
-import "@/styles/translo/icomoon.css";
-import "@/styles/translo/style-main.css";
 
 export const metadata: Metadata = {
   title: {

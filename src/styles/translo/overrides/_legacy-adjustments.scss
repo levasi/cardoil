@@ -9,31 +9,21 @@
   background-color: #121213;
 }
 
-/* Header one styles start here */
-.mobile-menu-open {
+/* Header drawer */
+.site-header__drawer--open {
   right: 300px;
 }
 
-.rotate {
+.site-header__close--active {
   transform: rotate(360deg);
   transition: all 0.3s linear;
 }
 
-/* .menu-backdrop {
-  opacity: 1;
-  visibility: visible;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 5;
-} */
-.sub-menu {
-  display: block !important;
-}
-
-.mobile-menu .navigation li {
+.site-header__drawer .site-header__list li {
   background-color: white !important;
 }
 
-/* Header one styles end here */
+/* Header drawer end */
 
 
 /* Home one hero slider styles start here */

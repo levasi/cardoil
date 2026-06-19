@@ -1,6 +1,6 @@
 /** squares **/
 
-@-moz-keyframessquares {
+@-moz-keyframes squares {
   0% {
     -webkit-transform: scale(1);
     transform: scale(1);
@@ -837,7 +837,7 @@
     Animation2 Css
 =============================================
 ***/
-@animation2 {
+@-webkit-keyframes animation2 {
   0% {
     -webkit-transform: rotateY(0deg);
     transform: rotateY(0deg)
@@ -1174,7 +1174,7 @@
 
 
 
-@service_hexagon_2 {
+@-webkit-keyframes service_hexagon_2 {
   0% {
     -webkit-transform: rotateY(0deg);
     transform: rotateY(0deg)
@@ -1624,7 +1624,7 @@
 
 /** squares **/
 
-@-moz-keyframessquares {
+@-moz-keyframes squares {
   0% {
     -webkit-transform: scale(1);
     transform: scale(1);

@@ -1,8 +1,12 @@
-// Cardoil Translo theme — SCSS partials only.
-// Vendor .css bundles are imported directly from layout.tsx to avoid
-// Tailwind PostCSS failing to resolve nested @import paths.
+// Translo theme — single SCSS entry (import order preserved from layout).
 
+@import "./all.min";
 @import "./base/fonts";
 @import "./modules/index";
 @import "./base/brand";
 @import "./components/index";
+@import "./animate.min";
+@import "./custom-animate";
+@import "./responsive";
+@import "./icomoon";
+@import "./style-main";

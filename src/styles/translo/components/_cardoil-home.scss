@@ -1,57 +1,7 @@
 @use "../abstracts/variables" as *;
 @use "../abstracts/mixins" as *;
 
-// Cardoil Home-2 — header, hero, testimonials (uses design tokens)
-
-.homeTwo {
-  --site-header-height: #{$site-header-height};
-}
-
-@include respond(xl) {
-  .homeTwo {
-    --site-header-height: #{$site-header-height-mobile};
-  }
-}
-
-.main-header-two {
-  position: relative;
-  z-index: 5;
-  min-height: var(--site-header-height);
-}
-
-.homeTwo .main-header-two .menu-area {
-  position: sticky;
-  top: 0;
-  z-index: 99;
-  min-height: var(--site-header-height);
-}
-
-.homeTwo .main-header-two .menu-area.sticky-menu {
-  position: sticky !important;
-  top: 0 !important;
-  margin-top: 0 !important;
-  animation: none !important;
-  transition: box-shadow 0.25s ease;
-}
-
-.homeTwo .main-header-two .menu-area.sticky-menu .main-header-two__top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: block !important;
-  transform: translateY(-100%);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-@include respond(xl) {
-  .homeTwo .main-header-two .menu-area.sticky-menu {
-    position: sticky !important;
-  }
-}
+// Home-2 — hero, testimonials (uses design tokens)
 
 .main-slider.main-slider-two {
   min-height: 100svh;

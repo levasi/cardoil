@@ -14,15 +14,15 @@ import { getLenis, onLenisScroll } from "@/lib/lenis";
 export function SiteHeader() {
   const pathname = usePathname();
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [scrollClassName, setScrollClassName] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
   const [despreOpen, setDespreOpen] = useState(false);
 
   useEffect(() => {
     const threshold = 100;
 
     const updateSticky = (scroll: number) => {
-      setScrollClassName((prev) => {
-        const next = scroll > threshold ? "sticky-menu" : "";
+      setIsScrolled((prev) => {
+        const next = scroll > threshold;
         return prev === next ? prev : next;
       });
     };
@@ -58,41 +58,44 @@ export function SiteHeader() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="main-header main-header-two">
-      <div id="sticky-header" className={`menu-area ${scrollClassName}`}>
-        <div className="main-header-two__outer bg-white">
-          <div className="logo-box-two">
+    <header className="site-header">
+      <div
+        id="sticky-header"
+        className={`site-header__sticky ${isScrolled ? "site-header__sticky--scrolled" : ""}`}
+      >
+        <div className="site-header__shell bg-white">
+          <div className="site-header__logo">
             <Link href="/">
               <img src={siteConfig.logo} alt="Cardoil Avantaj" />
             </Link>
           </div>
-          <div className="menu-area__inner">
-            <div className="mobile-nav-toggler" onClick={openMobile}>
+          <div className="site-header__toolbar">
+            <div className="site-header__menu-btn" onClick={openMobile}>
               <i className="fas fa-bars" />
             </div>
-            <div className="menu-wrap">
-              <nav className="menu-nav">
-                <div className="main-header-two__inner">
-                  <div className="main-header-two__top">
+            <div className="site-header__nav-wrap">
+              <nav className="site-header__nav">
+                <div className="site-header__frame">
+                  <div className="site-header__top">
                     <div
-                      className="main-header-two__top-pattern"
+                      className="site-header__top-bg"
                       style={{
                         backgroundImage:
                           "url(/img/pattern/header-v2-pattern.png)",
                       }}
                     />
-                    <div className="main-header-two__top-inner">
-                      <div className="main-header-two__top-left">
-                        <div className="header-contact-info">
+                    <div className="site-header__top-inner">
+                      <div className="site-header__top-start">
+                        <div className="site-header__contact">
                           <ul>
                             <li>
-                              <div className="icon-box">
+                              <div className="site-header__icon">
                                 <span className="icon-pin" />
                               </div>
                               <p>{siteConfig.address}</p>
                             </li>
                             <li>
-                              <div className="icon-box">
+                              <div className="site-header__icon">
                                 <span className="icon-paper-plane" />
                               </div>
                               <p>
@@ -104,9 +107,9 @@ export function SiteHeader() {
                           </ul>
                         </div>
                       </div>
-                      <div className="main-header-two__top-right">
-                        <div className="inner">
-                          <div className="btn-box">
+                      <div className="site-header__top-end">
+                        <div className="site-header__top-actions">
+                          <div className="site-header__offer">
                             <Link href="/oferta">
                               Solicită ofertă
                               <span className="icon-right-arrow" />
@@ -117,18 +120,18 @@ export function SiteHeader() {
                     </div>
                   </div>
 
-                  <div className="main-header-two__bottom">
-                    <div className="main-header-two__bottom-left">
-                      <div className="navbar-wrap main-menu">
-                        <ul className="navigation">
+                  <div className="site-header__main">
+                    <div className="site-header__main-start">
+                      <div className="site-header__menu">
+                        <ul className="site-header__list">
                           {mainNav.map((item) =>
                             item.children ? (
                               <li
                                 key={item.href}
-                                className={`menu-item-has-children ${isActive(item.href) ? "active" : ""}`}
+                                className={`has-children ${isActive(item.href) ? "active" : ""}`}
                               >
                                 <Link href={item.href}>{item.label}</Link>
-                                <ul className="sub-menu">
+                                <ul className="site-header__dropdown">
                                   {item.children.map((child) => (
                                     <li key={child.href}>
                                       <a
@@ -165,14 +168,14 @@ export function SiteHeader() {
                       </div>
                     </div>
 
-                    <div className="main-header-two__bottom-right">
+                    <div className="site-header__main-end">
                       {languageLinks.map((lang) => (
                         <a
                           key={lang.lang}
                           href={lang.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="main-header__language-switcher"
+                          className="site-header__locale"
                           style={{ marginRight: 12 }}
                         >
                           <img
@@ -184,11 +187,11 @@ export function SiteHeader() {
                           {lang.lang}
                         </a>
                       ))}
-                      <div className="contact-box">
-                        <div className="icon-box">
+                      <div className="site-header__call">
+                        <div className="site-header__icon">
                           <span className="icon-out-call" />
                         </div>
-                        <div className="text">
+                        <div className="site-header__label">
                           <p>
                             <Link
                               href={`tel:${siteConfig.phone.replace(/\./g, "")}`}
@@ -205,16 +208,18 @@ export function SiteHeader() {
             </div>
           </div>
 
-          <div className={`mobile-menu ${mobileMenu ? "mobile-menu-open" : ""}`}>
-            <nav className="menu-box">
+          <div
+            className={`site-header__drawer ${mobileMenu ? "site-header__drawer--open" : ""}`}
+          >
+            <nav className="site-header__drawer-inner">
               <div
-                className={`close-btn flex justify-end ${mobileMenu ? "rotate" : ""}`}
+                className={`site-header__close flex justify-end ${mobileMenu ? "site-header__close--active" : ""}`}
                 onClick={closeMobile}
               >
                 <i className="fas fa-times" />
               </div>
-              <div className="menu-outer">
-                <ul className="navigation">
+              <div className="site-header__drawer-links">
+                <ul className="site-header__list">
                   {navLinks.map((link) => (
                     <li key={link.href}>
                       <Link href={link.href} onClick={closeMobile}>
@@ -222,12 +227,12 @@ export function SiteHeader() {
                       </Link>
                     </li>
                   ))}
-                  <li className="menu-item-has-children">
+                  <li className="has-children">
                     <Link href="/despre" onClick={() => setDespreOpen(!despreOpen)}>
                       Despre noi — mai mult
                     </Link>
                     <ul
-                      className={`sub-menu ${despreOpen ? "sub-menu-visible" : "sub-menu-hidden"}`}
+                      className={`site-header__dropdown ${despreOpen ? "site-header__dropdown--open" : "site-header__dropdown--closed"}`}
                     >
                       {mainNav
                         .find((n) => n.href === "/despre")
@@ -240,7 +245,7 @@ export function SiteHeader() {
                         ))}
                     </ul>
                     <div
-                      className="dropdown-btn"
+                      className="site-header__expand"
                       onClick={() => setDespreOpen(!despreOpen)}
                     >
                       <span className="fas fa-angle-down" />
@@ -259,7 +264,7 @@ export function SiteHeader() {
               </div>
             </nav>
             <div
-              className="menu-backdrop"
+              className="site-header__backdrop"
               onClick={closeMobile}
               onKeyDown={closeMobile}
               role="button"
