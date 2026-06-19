@@ -399,4 +399,58 @@
   .thm-btn i {
     @apply relative top-0 z-[1] ml-[7px] text-base;
   }
+
+  /* Homepage services grid (replaces carousel cards) */
+  .services-two .sec-title-two {
+    @apply mb-10 lg:mb-14;
+  }
+
+  .services-two__card {
+    @apply flex h-full flex-col overflow-hidden rounded-md bg-white;
+    box-shadow: 0 12px 40px rgba(var(--theme-black-rgb), 0.08);
+  }
+
+  .services-two__card-media {
+    @apply relative aspect-[4/3] overflow-hidden;
+  }
+
+  .services-two__card-media img {
+    @apply h-full w-full object-cover transition-transform duration-500 ease-out;
+  }
+
+  .services-two__card:hover .services-two__card-media img {
+    @apply scale-105;
+  }
+
+  .services-two__card-index {
+    @apply absolute right-4 bottom-4 flex size-10 items-center justify-center rounded-full border-2 border-white bg-brand text-sm font-bold text-white;
+  }
+
+  .services-two__card-body {
+    @apply flex flex-1 flex-col p-6 pt-5;
+  }
+
+  .services-two__card-eyebrow {
+    @apply mb-2 text-sm font-medium text-brand;
+  }
+
+  .services-two__card-body h3 {
+    @apply mb-3 text-xl leading-snug font-semibold text-theme-black;
+  }
+
+  .services-two__card-body h3 a {
+    @apply text-theme-black transition-colors duration-200;
+  }
+
+  .services-two__card-body h3 a:hover {
+    @apply text-brand;
+  }
+
+  .services-two__card-desc {
+    @apply mb-5 flex-1 text-[15px] leading-relaxed text-theme-body;
+  }
+
+  .services-two__card-body .thm-btn {
+    @apply mt-auto self-start text-white;
+  }
 }

@@ -1,19 +1,136 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation } from "swiper/modules";
-import "swiper/css";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
 import { services } from "@/lib/content";
 import { FallbackBackground } from "@/components/shared/fallback-background";
 import { FallbackImage } from "@/components/shared/fallback-image";
+import { gsap, prefersReducedMotion, revealPresets } from "@/lib/gsap";
+
+function getSectionPadding() {
+  if (window.matchMedia("(max-width: 767px)").matches) return 60;
+  if (window.matchMedia("(max-width: 991px)").matches) return 80;
+  return 120;
+}
+
+function getGridGap() {
+  return window.matchMedia("(min-width: 1024px)").matches ? "2rem" : "1.5rem";
+}
+
+function getGridDimensions(itemCount: number) {
+  if (window.matchMedia("(min-width: 1024px)").matches) {
+    const cols = 3;
+    return { rows: Math.ceil(itemCount / cols), cols };
+  }
+  if (window.matchMedia("(min-width: 768px)").matches) {
+    const cols = 2;
+    return { rows: Math.ceil(itemCount / cols), cols };
+  }
+  return { rows: itemCount, cols: 1 };
+}
+
+function getBottomUpStaggerIndex(index: number, rows: number, cols: number) {
+  const row = Math.floor(index / cols);
+  const col = index % cols;
+  const rowFromBottom = rows - 1 - row;
+  return rowFromBottom * cols + col;
+}
 
 export function HomeServices() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
+
+      const header = section.querySelector(".sec-title-two");
+      const grid = section.querySelector<HTMLElement>("[data-services-grid]");
+      const cards = grid ? gsap.utils.toArray<Element>(grid.children) : [];
+      const shape = section.querySelector(".shape1");
+
+      if (prefersReducedMotion()) return;
+
+      const endPadding = getSectionPadding();
+      const endGap = getGridGap();
+      const { rows, cols } = getGridDimensions(cards.length);
+
+      gsap.set(section, {
+        paddingTop: endPadding * 0.65,
+        paddingBottom: endPadding * 0.7,
+      });
+      if (grid) gsap.set(grid, { gap: "0.75rem" });
+      if (shape) gsap.set(shape, { opacity: 0, y: 28 });
+      if (header) gsap.set(header, revealPresets.fadeUpSoft);
+      if (cards.length) gsap.set(cards, revealPresets.fadeUpSoft);
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 82%",
+          end: "top 58%",
+          scrub: 0.5,
+        },
+      });
+
+      tl.to(
+        section,
+        {
+          paddingTop: endPadding,
+          paddingBottom: endPadding,
+          duration: 1,
+          ease: "power3.out",
+        },
+        0
+      );
+
+      if (grid) {
+        tl.to(
+          grid,
+          { gap: endGap, duration: 1, ease: "power3.out" },
+          0
+        );
+      }
+
+      if (shape) {
+        tl.fromTo(
+          shape,
+          { opacity: 0, y: 28 },
+          { opacity: 0.5, y: 0, duration: 0.9, ease: "power3.out" },
+          0.05
+        );
+      }
+
+      if (header) {
+        tl.fromTo(
+          header,
+          revealPresets.fadeUpSoft,
+          { y: 0, opacity: 1, duration: 0.85, ease: "power3.out" },
+          0.08
+        );
+      }
+
+      if (cards.length) {
+        tl.fromTo(
+          cards,
+          revealPresets.fadeUpSoft,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.75,
+            ease: "power3.out",
+            stagger: (index) => getBottomUpStaggerIndex(index, rows, cols) * 0.09,
+          },
+          0.15
+        );
+      }
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <section className="services-two padding">
+    <section className="services-two" id="services-two" ref={sectionRef}>
       <FallbackBackground
         className="services-two__bg"
         src="/img/background/services-v2-bg.jpg"
@@ -32,81 +149,39 @@ export function HomeServices() {
             transport
           </h2>
         </div>
-        <Swiper
-          className="services-two__slider"
-          slidesPerView={1}
-          spaceBetween={15}
-          navigation={{
-            nextEl: "#services-two__swiper-button-next",
-            prevEl: "#services-two__swiper-button-prev",
-            addIcons: false,
-          }}
-          loop
-          modules={[Autoplay, Navigation]}
-          autoplay={{ delay: 4000 }}
-          breakpoints={{
-            768: { slidesPerView: 2 },
-            1024: { slidesPerView: 4 },
-          }}
-          onSlideChange={(swiper) => setCurrentSlide(swiper.realIndex)}
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          data-services-grid
         >
           {services.map((service, index) => (
-            <SwiperSlide key={service.title}>
-              <div className="services-two__single">
-                <div className="services-two__single-img">
-                  <div className="inner">
-                    <FallbackImage
-                      src={service.image}
-                      alt={service.imageAlt}
-                      fallbackKey={service.imageFallback}
-                    />
-                  </div>
-                  <div className="number-box">
-                    {String(index + 1).padStart(2, "0")}
-                  </div>
-                </div>
-                <div className="services-two__single-content">
-                  <div className="services-two__single-content-inner">
-                    <h3>
-                      <Link href="/servicii">{service.title}</Link>
-                    </h3>
-                    <p>{service.description}</p>
-                    <div className="count-box">
-                      {String(index + 1).padStart(2, "0")}
-                    </div>
-                  </div>
-                  <div className="btn-box">
-                    <Link className="thm-btn" href="/servicii">
-                      <span className="txt">Detalii</span>
-                      <i className="icon-right-arrow" />
-                    </Link>
-                  </div>
-                </div>
+            <article
+              key={service.title}
+              className="services-two__card"
+              data-service-card
+            >
+              <div className="services-two__card-media">
+                <FallbackImage
+                  src={service.image}
+                  alt={service.imageAlt}
+                  fallbackKey={service.imageFallback}
+                />
+                <span className="services-two__card-index" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
               </div>
-            </SwiperSlide>
+              <div className="services-two__card-body">
+                <p className="services-two__card-eyebrow">{service.subtitle}</p>
+                <h3>
+                  <Link href="/servicii">{service.title}</Link>
+                </h3>
+                <p className="services-two__card-desc">{service.description}</p>
+                <Link className="thm-btn" href="/servicii">
+                  <span className="txt">Detalii</span>
+                  <i className="icon-right-arrow" />
+                </Link>
+              </div>
+            </article>
           ))}
-        </Swiper>
-        <div className="services-two__wrap">
-          <div className="swiper-counter">
-            <div id="current2">{currentSlide + 1}</div>
-            <div id="total2">{services.length}</div>
-          </div>
-        </div>
-        <div className="swiper-nav-style1">
-          <div
-            className="swiper-button-prev"
-            id="services-two__swiper-button-next"
-            style={{ marginRight: "5px" }}
-          >
-            <i className="icon-left-arrow-5" aria-hidden="true" />
-          </div>
-          <div
-            className="swiper-button-next"
-            id="services-two__swiper-button-prev"
-            style={{ marginLeft: "25px" }}
-          >
-            <i className="icon-right-arrow-5" aria-hidden="true" />
-          </div>
         </div>
       </div>
     </section>
