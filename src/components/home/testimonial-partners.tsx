@@ -15,9 +15,9 @@ interface TestimonialPartnersProps {
 
 export function TestimonialPartners({ partners }: TestimonialPartnersProps) {
   return (
-    <div className="cardoil-testimonial-partners relative z-[1] mt-[145px] overflow-hidden border-t-2 border-white/20 bg-[#0a1628] py-[125px] pb-[124px]">
+    <div className="cardoil-testimonial-partners relative z-[1] mt-[145px] overflow-hidden border-t-2 border-white/20 bg-theme-dark-bg py-[125px] pb-[124px]">
       <div
-        className="cardoil-testimonial-partners__shape float-bob-x absolute bottom-0 -right-[30px] -z-10 max-lg:hidden"
+        className="cardoil-testimonial-partners__shape absolute bottom-0 -right-[30px] -z-10 max-lg:hidden"
         aria-hidden
       >
         <img src="/img/shape/brand-v1-shape1.png" alt="" />

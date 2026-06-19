@@ -1,11 +1,11 @@
-import type { PexelsImageKey } from "@/lib/pexels";
+import { pexelsImages, type PexelsImageKey } from "@/lib/pexels";
 
 const CDN = "https://cardoilavantaj.ro/site/wp-content/uploads";
 
 export const homeImages = {
-  hero: `${CDN}/2017/07/Carduri-combustibil-1.jpg`,
-  expedition: `${CDN}/2019/02/Firma-de-transport.jpg`,
-  energy: `${CDN}/2019/02/reduceri-la-carburant.jpg`,
+  hero: pexelsImages.heroFuel,
+  expedition: pexelsImages.transport,
+  energy: pexelsImages.fuel,
   servicesBanner: `${CDN}/2019/02/Avantaje-transportatori.jpg`,
   partnershipBanner: `${CDN}/2015/03/Servicii2.png`,
   coface: `${CDN}/2018/11/Parteneriat-Coface-Cardoil.jpg`,

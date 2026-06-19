@@ -93,7 +93,7 @@ export function HomeTestimonials() {
                   data-testimonial-reveal
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium capitalize leading-5 text-[#6F7174]">
+                    <p className="text-sm font-medium capitalize leading-5 text-theme-text-muted">
                       Client mulțumit
                     </p>
                     <h3 className="mt-[3px] text-lg font-semibold capitalize leading-7">
@@ -106,10 +106,10 @@ export function HomeTestimonials() {
                   className="cardoil-testimonial-card__body mt-[29px]"
                   data-testimonial-reveal
                 >
-                  <p className="mb-3.5 text-lg font-semibold capitalize leading-7 text-[#6F7174]">
+                  <p className="mb-3.5 text-lg font-semibold capitalize leading-7 text-theme-text-muted">
                     {item.role}
                   </p>
-                  <blockquote className="m-0 font-medium leading-relaxed text-[#062547]">
+                  <blockquote className="m-0 font-medium leading-relaxed text-theme-navy">
                     {item.quote}
                   </blockquote>
                 </div>

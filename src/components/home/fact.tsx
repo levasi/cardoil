@@ -1,49 +1,55 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentType } from "react";
-import { prefersReducedMotion } from "@/lib/gsap";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import { gsap, prefersReducedMotion, ScrollTrigger } from "@/lib/gsap";
 import { factStats } from "@/lib/content";
 
-type AnimatedNumbersProps = {
-  animateToNumber: number;
-  transitions: (index: number) => object;
-};
+function formatCount(value: number) {
+  return Math.round(value).toLocaleString("ro-RO");
+}
 
 export function HomeFact() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [AnimatedNumbers, setAnimatedNumbers] =
-    useState<ComponentType<AnimatedNumbersProps> | null>(null);
 
-  useEffect(() => {
-    if (prefersReducedMotion()) {
-      setIsVisible(true);
-      return;
-    }
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
 
-    const section = sectionRef.current;
-    if (!section) return;
+      const counters = gsap.utils.toArray<HTMLElement>("[data-count]", section);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -28% 0px", threshold: 0 }
-    );
+      if (prefersReducedMotion()) {
+        counters.forEach((el) => {
+          el.textContent = formatCount(Number(el.dataset.count));
+        });
+        return;
+      }
 
-    observer.observe(section);
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top 72%",
+        once: true,
+        onEnter: () => {
+          counters.forEach((el, index) => {
+            const counter = { value: 0 };
 
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    import("react-animated-numbers").then((module) => {
-      setAnimatedNumbers(() => module.default);
-    });
-  }, []);
+            gsap.to(counter, {
+              value: Number(el.dataset.count),
+              duration: 1.8,
+              delay: index * 0.1,
+              ease: "power2.out",
+              snap: { value: 1 },
+              onUpdate: () => {
+                el.textContent = formatCount(counter.value);
+              },
+            });
+          });
+        },
+      });
+    },
+    { scope: sectionRef }
+  );
 
   return (
     <section
@@ -65,16 +71,8 @@ export function HomeFact() {
                 <div className="fact-counter-two__single-inner">
                   <h2 className="count flex">
                     <span className="plus">+</span>
-                    <span className="odometer">
-                      {isVisible && AnimatedNumbers && (
-                        <AnimatedNumbers
-                          animateToNumber={stat.value}
-                          transitions={(i) => ({
-                            type: "spring",
-                            duration: i + 0.3,
-                          })}
-                        />
-                      )}
+                    <span className="odometer" data-count={stat.value}>
+                      0
                     </span>
                   </h2>
                   <div className="text">

@@ -1,9 +1,10 @@
 export const pexelsImages = {
   heroFuel:
-    "https://images.pexels.com/photos/9799996/pexels-photo-9799996.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "https://images.pexels.com/photos/36228061/pexels-photo-36228061.jpeg?auto=compress&cs=tinysrgb&w=1920",
   transport:
-    "https://images.pexels.com/photos/4484078/pexels-photo-4484078.jpeg?auto=compress&cs=tinysrgb&w=1920",
-  fuel: "https://images.pexels.com/photos/9799996/pexels-photo-9799996.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "https://images.pexels.com/photos/32357268/pexels-photo-32357268.jpeg?auto=compress&cs=tinysrgb&w=1920",
+  fuel:
+    "https://images.pexels.com/photos/34636185/pexels-photo-34636185.jpeg?auto=compress&cs=tinysrgb&w=1920",
   fuelCard:
     "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200",
   team: "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200",

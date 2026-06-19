@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import {
   languageLinks,
   mainNav,
@@ -10,6 +11,85 @@ import {
   siteConfig,
 } from "@/lib/content";
 import { getLenis, onLenisScroll } from "@/lib/lenis";
+
+function SiteHeaderMainEnd() {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const phoneHref = `tel:${siteConfig.phone.replace(/\./g, "")}`;
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <>
+      <div className="site-header__call">
+        <div className="site-header__icon">
+          <span className="icon-out-call" aria-hidden="true" />
+        </div>
+        <Link href={phoneHref} className="ml-2 text-md">
+          {siteConfig.phoneDisplay} ({siteConfig.phone})
+        </Link>
+      </div>
+
+      <div
+        ref={menuRef}
+        className={`site-header__actions ${open ? "site-header__actions--open" : ""}`}
+      >
+        <button
+          type="button"
+          className="site-header__actions-trigger"
+          aria-expanded={open}
+          aria-haspopup="menu"
+          aria-controls="site-header-lang-menu"
+          aria-label="Selectează limba"
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span className="site-header__actions-label">RO</span>
+          <ChevronDown className="site-header__actions-chevron" aria-hidden="true" />
+        </button>
+        <ul
+          id="site-header-lang-menu"
+          className="site-header__actions-menu"
+          role="menu"
+        >
+          {languageLinks.map((lang) => (
+            <li key={lang.lang} role="none">
+              <a
+                href={lang.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+              >
+                <img src={lang.flag} alt="" width={18} height={12} />
+                <span>{lang.lang}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+}
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -61,7 +141,6 @@ export function SiteHeader() {
     <header className="site-header">
       <div
         id="sticky-header"
-        className={`site-header__sticky ${isScrolled ? "site-header__sticky--scrolled" : ""}`}
       >
         <div className="site-header__shell bg-white">
           <div className="site-header__logo">
@@ -71,7 +150,7 @@ export function SiteHeader() {
           </div>
           <div className="site-header__toolbar">
             <div className="site-header__menu-btn" onClick={openMobile}>
-              <i className="fas fa-bars" />
+              <Menu className="size-7" aria-hidden="true" />
             </div>
             <div className="site-header__nav-wrap">
               <nav className="site-header__nav">
@@ -169,38 +248,7 @@ export function SiteHeader() {
                     </div>
 
                     <div className="site-header__main-end">
-                      {languageLinks.map((lang) => (
-                        <a
-                          key={lang.lang}
-                          href={lang.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="site-header__locale"
-                          style={{ marginRight: 12 }}
-                        >
-                          <img
-                            src={lang.flag}
-                            alt={lang.lang}
-                            width={18}
-                            height={12}
-                          />{" "}
-                          {lang.lang}
-                        </a>
-                      ))}
-                      <div className="site-header__call">
-                        <div className="site-header__icon">
-                          <span className="icon-out-call" />
-                        </div>
-                        <div className="site-header__label">
-                          <p>
-                            <Link
-                              href={`tel:${siteConfig.phone.replace(/\./g, "")}`}
-                            >
-                              {siteConfig.phoneDisplay} ({siteConfig.phone})
-                            </Link>
-                          </p>
-                        </div>
-                      </div>
+                      <SiteHeaderMainEnd />
                     </div>
                   </div>
                 </div>
@@ -216,7 +264,7 @@ export function SiteHeader() {
                 className={`site-header__close flex justify-end ${mobileMenu ? "site-header__close--active" : ""}`}
                 onClick={closeMobile}
               >
-                <i className="fas fa-times" />
+                <X className="size-6" aria-hidden="true" />
               </div>
               <div className="site-header__drawer-links">
                 <ul className="site-header__list">
@@ -248,7 +296,7 @@ export function SiteHeader() {
                       className="site-header__expand"
                       onClick={() => setDespreOpen(!despreOpen)}
                     >
-                      <span className="fas fa-angle-down" />
+                      <ChevronDown className="size-4" aria-hidden="true" />
                     </div>
                   </li>
                   <li>
@@ -260,6 +308,34 @@ export function SiteHeader() {
                       Contul meu
                     </a>
                   </li>
+                  <li className="site-header__drawer-divider" role="separator" />
+                  <li>
+                    <a
+                      href={`tel:${siteConfig.phone.replace(/\./g, "")}`}
+                      onClick={closeMobile}
+                    >
+                      {siteConfig.phoneDisplay} ({siteConfig.phone})
+                    </a>
+                  </li>
+                  {languageLinks.map((lang) => (
+                    <li key={lang.lang}>
+                      <a
+                        href={lang.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={closeMobile}
+                      >
+                        <img
+                          src={lang.flag}
+                          alt=""
+                          width={18}
+                          height={12}
+                          className="mr-2 inline-block"
+                        />
+                        {lang.lang}
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </nav>
